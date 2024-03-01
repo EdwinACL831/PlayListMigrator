@@ -1,6 +1,8 @@
 package com.example.playlistmigrator;
 
+import android.content.Context;
 import android.os.Build;
+import android.util.Log;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
@@ -19,6 +21,9 @@ public abstract class BackgroundTask<Result> implements Callable<Result> {
             try {
                 return this.call();
             } catch (Exception e) {
+                if(e.getMessage() != null){
+                    Log.e(this.getClass().getSimpleName(), e.getMessage());
+                }
                 throw new RuntimeException(e);
             }
         }, executorService);
