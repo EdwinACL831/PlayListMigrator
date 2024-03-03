@@ -21,7 +21,6 @@ public class MainActivity extends ComponentActivity {
             @Override
             public void onClick(View v) {
                 new FetchSourcePlayListTask(MainActivity.this).executeTask();
-                Toast.makeText(MainActivity.this, "Hello World", Toast.LENGTH_SHORT).show();
             }
         });
     }

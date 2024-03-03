@@ -29,21 +29,12 @@ public class FetchSourcePlayListTask extends BackgroundTask<PlaylistAPIResponse>
     protected void postExecute(PlaylistAPIResponse data) {
         Log.d(FetchSourcePlayListTask.class.getSimpleName(), "API data: " +
                 data.getTotalPlayLists());
-        if(context instanceof MainActivity) {
-            ((MainActivity)context).runOnUiThread(() -> {
-                Intent intent = new Intent(context, PlaylistsActivity.class);
-                context.startActivity(intent);
-            });
-        }
+        runOnUIThread(() -> context.startActivity( new Intent(context, PlaylistsActivity.class)));
     }
 
     @Override
     public PlaylistAPIResponse call() throws Exception {
-        if(this.context instanceof MainActivity) {
-            ((MainActivity)context).runOnUiThread(() -> {
-                Toast.makeText(context, "Fetching data", Toast.LENGTH_SHORT).show();
-            });
-        }
+        runOnUIThread(() -> Toast.makeText(context, "Fetching data", Toast.LENGTH_SHORT).show());
 
         Log.d(FetchSourcePlayListTask.class.getSimpleName(), "Start API authentication");
         // here goes the auth's spotify API call using retrofit
@@ -87,5 +78,11 @@ public class FetchSourcePlayListTask extends BackgroundTask<PlaylistAPIResponse>
         Response<PlaylistAPIResponse> response = api.getUserPlaylists(username,
                 "Bearer " + token).execute();
         return response.body();
+    }
+
+    private void runOnUIThread(Runnable runnable) {
+        if(context instanceof MainActivity) {
+            ((MainActivity)context).runOnUiThread(runnable);
+        }
     }
 }
