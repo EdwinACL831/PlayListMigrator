@@ -18,8 +18,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class FetchSourcePlayListTask extends BackgroundTask<PlaylistAPIResponse> {
     private final static String AUTH_URL = "https://accounts.spotify.com/api/";
     private final static String API = "https://api.spotify.com/v1/";
-    private final static String CLIENT_ID = "b2474e4c07cf4d0f9ef7776f59ce5a0d";
-    private final static String TOKEN = "9d73237eada04c8fbeff170874c58e15";
+    private final static String CLIENT_ID = "";
+    private final static String TOKEN = "";
     private final Context context;
 
     public FetchSourcePlayListTask(Context context) {
