@@ -6,6 +6,7 @@ import android.widget.Toast;
 
 import com.example.playlistmigrator.auth.AuthObject;
 import com.example.playlistmigrator.playlists.Playlist;
+import com.example.playlistmigrator.playlists.PlaylistAPIResponse;
 
 import java.io.IOException;
 import java.util.List;
@@ -14,7 +15,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class FetchSourcePlayListTask extends BackgroundTask<List<Playlist>> {
+public class FetchSourcePlayListTask extends BackgroundTask<PlaylistAPIResponse> {
     private final static String AUTH_URL = "https://accounts.spotify.com/api/";
     private final static String API = "https://api.spotify.com/v1/";
     private final static String CLIENT_ID = "b2474e4c07cf4d0f9ef7776f59ce5a0d";
@@ -25,13 +26,13 @@ public class FetchSourcePlayListTask extends BackgroundTask<List<Playlist>> {
         this.context = context;
     }
     @Override
-    protected void postExecute(List<Playlist> data) {
+    protected void postExecute(PlaylistAPIResponse data) {
         Log.d(FetchSourcePlayListTask.class.getSimpleName(), "API data: " +
-                data.get(0).getName());
+                data.getTotalPlayLists());
     }
 
     @Override
-    public List<Playlist> call() throws Exception {
+    public PlaylistAPIResponse call() throws Exception {
         if(this.context instanceof MainActivity) {
             ((MainActivity)context).runOnUiThread(() -> {
                 Toast.makeText(context, "Fetching data", Toast.LENGTH_SHORT).show();
@@ -58,10 +59,10 @@ public class FetchSourcePlayListTask extends BackgroundTask<List<Playlist>> {
                 .build();
 
         SpotifyAPI api = rf.create(SpotifyAPI.class);
-        Response<List<Playlist>> response2 = api.getUserPlaylists("edwinacl",
+        Response<PlaylistAPIResponse> response = api.getUserPlaylists("edwinacl",
                 "Bearer " + token).execute();
 
-        return response2.body();
+        return response.body();
     }
 
     private String authenticateUser() throws IOException {

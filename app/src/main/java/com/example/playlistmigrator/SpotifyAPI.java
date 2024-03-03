@@ -2,6 +2,7 @@ package com.example.playlistmigrator;
 
 import com.example.playlistmigrator.auth.AuthObject;
 import com.example.playlistmigrator.playlists.Playlist;
+import com.example.playlistmigrator.playlists.PlaylistAPIResponse;
 
 import java.util.List;
 
@@ -21,6 +22,6 @@ public interface SpotifyAPI {
                                   @Field("client_secret") String clientSecret);
 
     @GET("users/{username}/playlists")
-    Call<List<Playlist>> getUserPlaylists(@Path("username") String username,
-                                          @Header("Authorization") String authToken);
+    Call<PlaylistAPIResponse> getUserPlaylists(@Path("username") String username,
+                                               @Header("Authorization") String authToken);
 }
