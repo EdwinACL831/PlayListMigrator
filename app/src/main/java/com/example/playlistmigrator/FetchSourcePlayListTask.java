@@ -1,15 +1,15 @@
 package com.example.playlistmigrator;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.example.playlistmigrator.auth.AuthObject;
-import com.example.playlistmigrator.playlists.Playlist;
 import com.example.playlistmigrator.playlists.PlaylistAPIResponse;
+import com.example.playlistmigrator.playlists.PlaylistsActivity;
 
 import java.io.IOException;
-import java.util.List;
 
 import retrofit2.Response;
 import retrofit2.Retrofit;
@@ -29,6 +29,12 @@ public class FetchSourcePlayListTask extends BackgroundTask<PlaylistAPIResponse>
     protected void postExecute(PlaylistAPIResponse data) {
         Log.d(FetchSourcePlayListTask.class.getSimpleName(), "API data: " +
                 data.getTotalPlayLists());
+        if(context instanceof MainActivity) {
+            ((MainActivity)context).runOnUiThread(() -> {
+                Intent intent = new Intent(context, PlaylistsActivity.class);
+                context.startActivity(intent);
+            });
+        }
     }
 
     @Override
@@ -47,22 +53,14 @@ public class FetchSourcePlayListTask extends BackgroundTask<PlaylistAPIResponse>
             Log.e(FetchSourcePlayListTask.class.getSimpleName(), msg);
             throw new RuntimeException(msg);
         }
-
         Log.d(FetchSourcePlayListTask.class.getSimpleName(),
                 "Finished API authentication successfully");
 
         // fetch the playlists
         Log.d(FetchSourcePlayListTask.class.getSimpleName(), "Start fetch playlists API");
-        Retrofit rf = new Retrofit.Builder()
-                .baseUrl(API)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-
-        SpotifyAPI api = rf.create(SpotifyAPI.class);
-        Response<PlaylistAPIResponse> response = api.getUserPlaylists("edwinacl",
-                "Bearer " + token).execute();
-
-        return response.body();
+        PlaylistAPIResponse response = fetchPlaylistsByUser("edwinacl", token);
+        Log.d(FetchSourcePlayListTask.class.getSimpleName(), "Finish fetch playlists API");
+        return response;
     }
 
     private String authenticateUser() throws IOException {
@@ -75,7 +73,19 @@ public class FetchSourcePlayListTask extends BackgroundTask<PlaylistAPIResponse>
         Response<AuthObject> response = api
                 .authenticate("client_credentials", CLIENT_ID, TOKEN).execute();
 
-        return response.body().getAccessToken() == null ?
+        return response.body() == null ?
                 "" : response.body().getAccessToken();
+    }
+
+    private PlaylistAPIResponse fetchPlaylistsByUser(String username, String token) throws IOException {
+        Retrofit rf = new Retrofit.Builder()
+                .baseUrl(API)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        SpotifyAPI api = rf.create(SpotifyAPI.class);
+        Response<PlaylistAPIResponse> response = api.getUserPlaylists(username,
+                "Bearer " + token).execute();
+        return response.body();
     }
 }
