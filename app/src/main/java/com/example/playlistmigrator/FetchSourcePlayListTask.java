@@ -10,6 +10,8 @@ import com.example.playlistmigrator.playlists.PlaylistAPIResponse;
 import com.example.playlistmigrator.playlists.PlaylistsActivity;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
 
 import retrofit2.Response;
 import retrofit2.Retrofit;
@@ -18,12 +20,21 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class FetchSourcePlayListTask extends BackgroundTask<PlaylistAPIResponse> {
     private final static String AUTH_URL = "https://accounts.spotify.com/api/";
     private final static String API = "https://api.spotify.com/v1/";
-    private final static String CLIENT_ID = "b2474e4c07cf4d0f9ef7776f59ce5a0d";
-    private final static String TOKEN = "9d73237eada04c8fbeff170874c58e15";
+    private String cliendId;
+    private String token;
     private final Context context;
 
     public FetchSourcePlayListTask(Context context) {
         this.context = context;
+        InputStream inputStream = context.getResources().openRawResource(R.raw.config);
+        Properties properties = new Properties();
+        try {
+            properties.load(inputStream);
+            cliendId = properties.getProperty("client_id");
+            token = properties.getProperty("token");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
     @Override
     protected void postExecute(PlaylistAPIResponse data) {
@@ -62,7 +73,7 @@ public class FetchSourcePlayListTask extends BackgroundTask<PlaylistAPIResponse>
                 .build();
         SpotifyAPI api = rf.create(SpotifyAPI.class);
         Response<AuthObject> response = api
-                .authenticate("client_credentials", CLIENT_ID, TOKEN).execute();
+                .authenticate("client_credentials", cliendId, token).execute();
 
         return response.body() == null ?
                 "" : response.body().getAccessToken();

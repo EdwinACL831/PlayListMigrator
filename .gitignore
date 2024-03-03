@@ -31,3 +31,6 @@ google-services.json
 
 # Android Profiling
 *.hprof
+
+#configs
+app/src/main/res/raw/config.properties
