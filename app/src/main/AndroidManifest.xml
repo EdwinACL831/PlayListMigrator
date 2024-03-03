@@ -18,6 +18,12 @@
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.PlayListMigrator">
+        </activity>
+        <activity
+            android:name=".playlists.PlaylistsActivity"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.PlayListMigrator"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

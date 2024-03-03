@@ -9,6 +9,11 @@ public class Playlist {
     @SerializedName("id")
     private String id;
 
+    public Playlist(String id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
     public String getName() {
         return name;
     }
