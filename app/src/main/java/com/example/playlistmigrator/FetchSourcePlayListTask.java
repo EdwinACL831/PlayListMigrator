@@ -8,6 +8,7 @@ import android.widget.Toast;
 import com.example.playlistmigrator.auth.AuthObject;
 import com.example.playlistmigrator.playlists.PlaylistAPIResponse;
 import com.example.playlistmigrator.playlists.PlaylistsActivity;
+import com.google.gson.Gson;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,19 +19,22 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class FetchSourcePlayListTask extends BackgroundTask<PlaylistAPIResponse> {
+    public final static String API_RESPONSE_KEY = "API_RESPONSE";
     private final static String AUTH_URL = "https://accounts.spotify.com/api/";
     private final static String API = "https://api.spotify.com/v1/";
-    private String cliendId;
+    private final String username;
+    private String clientId;
     private String token;
     private final Context context;
 
-    public FetchSourcePlayListTask(Context context) {
+    public FetchSourcePlayListTask(Context context, String username) {
+        this.username = username;
         this.context = context;
         InputStream inputStream = context.getResources().openRawResource(R.raw.config);
         Properties properties = new Properties();
         try {
             properties.load(inputStream);
-            cliendId = properties.getProperty("client_id");
+            clientId = properties.getProperty("client_id");
             token = properties.getProperty("token");
         } catch (IOException e) {
             e.printStackTrace();
@@ -38,9 +42,12 @@ public class FetchSourcePlayListTask extends BackgroundTask<PlaylistAPIResponse>
     }
     @Override
     protected void postExecute(PlaylistAPIResponse data) {
+        String playlistAPIResponseJSON = new Gson().toJson(data);
         Log.d(FetchSourcePlayListTask.class.getSimpleName(), "API data: " +
-                data.getTotalPlayLists());
-        runOnUIThread(() -> context.startActivity( new Intent(context, PlaylistsActivity.class)));
+                playlistAPIResponseJSON);
+        Intent intent = new Intent(context, PlaylistsActivity.class);
+        intent.putExtra(API_RESPONSE_KEY, playlistAPIResponseJSON);
+        runOnUIThread(() -> context.startActivity(intent));
     }
 
     @Override
@@ -60,7 +67,7 @@ public class FetchSourcePlayListTask extends BackgroundTask<PlaylistAPIResponse>
 
         // fetch the playlists
         Log.d(FetchSourcePlayListTask.class.getSimpleName(), "Start fetch playlists API");
-        PlaylistAPIResponse response = fetchPlaylistsByUser("edwinacl", token);
+        PlaylistAPIResponse response = fetchPlaylistsByUser(this.username, token);
         Log.d(FetchSourcePlayListTask.class.getSimpleName(), "Finish fetch playlists API");
         return response;
     }
@@ -73,7 +80,7 @@ public class FetchSourcePlayListTask extends BackgroundTask<PlaylistAPIResponse>
                 .build();
         SpotifyAPI api = rf.create(SpotifyAPI.class);
         Response<AuthObject> response = api
-                .authenticate("client_credentials", cliendId, token).execute();
+                .authenticate("client_credentials", clientId, token).execute();
 
         return response.body() == null ?
                 "" : response.body().getAccessToken();
