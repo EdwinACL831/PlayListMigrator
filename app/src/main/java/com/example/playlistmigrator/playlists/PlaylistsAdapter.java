@@ -2,7 +2,8 @@ package com.example.playlistmigrator.playlists;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
+import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,12 +14,13 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.playlistmigrator.MainActivity;
 import com.example.playlistmigrator.R;
+import com.example.playlistmigrator.tracksselection.TrackSelectionActivity;
 
 import java.util.List;
 
 public class PlaylistsAdapter extends RecyclerView.Adapter<PlaylistsAdapter.ViewHolder> {
+    private static final String TAG = PlaylistsAdapter.class.getSimpleName();
     private final List<Playlist> playLists;
     private final Context context;
 
@@ -44,17 +46,26 @@ public class PlaylistsAdapter extends RecyclerView.Adapter<PlaylistsAdapter.View
 
         holder.getNameTextView().setText(String.format("Title:\t%s", name));
         holder.getIdTextView().setText(String.format("ID:\t%s", playlistId));
-        holder.setOnClickListener(v -> runOnUIThread(() -> Toast.makeText(context, "you clicked " +
-                    playLists.get(position).getName() + " playlist", Toast.LENGTH_SHORT).show()));
-        holder.getInfoBtn().setOnClickListener(v -> setupAlertDialog(name, numberOfTracks));
+        holder.setOnClickListener(v -> runOnUIThread(() -> {
+            Log.d(TAG, String.format("Loading [%s] playlist's tracks", name));
+            Intent intent = new Intent(context, TrackSelectionActivity.class);
+            intent.putExtra(PlaylistsActivity.PLAYLIST_ID_TO_LOAD_KEY, playlistId);
+            context.startActivity(intent);
+            Log.d(TAG, String.format("[%s] playlist's tracks loaded", name));
+        }));
+        holder.getInfoBtn().setOnClickListener(v -> {
+            Log.d(TAG, String.format("info button %d clicked", position));
+            setupAlertDialogAndDisplay(name, numberOfTracks);
+        });
     }
 
-    private void setupAlertDialog(String playlistName, int numberOfTracks) {
+    private void setupAlertDialogAndDisplay(String playlistName, int numberOfTracks) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle(playlistName)
                 .setMessage("Number of tracks: " + numberOfTracks)
                 .setPositiveButton("OK", (dialog, which) -> {
                     // Handle OK button click
+                    Log.d(TAG, "Closing Alert Dialog");
                     dialog.dismiss();
                 });
         AlertDialog dialog = builder.create();

@@ -11,10 +11,9 @@ import com.example.playlistmigrator.FetchSourcePlayListTask;
 import com.example.playlistmigrator.R;
 import com.google.gson.Gson;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class PlaylistsActivity extends ComponentActivity {
+
+    public static final String PLAYLIST_ID_TO_LOAD_KEY = "PLAYLIST_TO_LOAD";
     private RecyclerView recyclerView;
     private PlaylistsAdapter adapter;
 

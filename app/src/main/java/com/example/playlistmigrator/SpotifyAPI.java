@@ -1,10 +1,8 @@
 package com.example.playlistmigrator;
 
 import com.example.playlistmigrator.auth.AuthObject;
-import com.example.playlistmigrator.playlists.Playlist;
 import com.example.playlistmigrator.playlists.PlaylistAPIResponse;
-
-import java.util.List;
+import com.example.playlistmigrator.tracksselection.TracksAPIResponse;
 
 import retrofit2.Call;
 import retrofit2.http.Field;
@@ -24,4 +22,8 @@ public interface SpotifyAPI {
     @GET("users/{username}/playlists")
     Call<PlaylistAPIResponse> getUserPlaylists(@Path("username") String username,
                                                @Header("Authorization") String authToken);
+
+    @GET("playlists/{playlist_id}/tracks")
+    Call<TracksAPIResponse> getPlaylistTracks(@Path("playlist_id") String playlistId,
+                                              @Header("Authorization") String authToken);
 }

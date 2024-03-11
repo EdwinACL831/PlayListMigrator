@@ -12,7 +12,7 @@ import java.util.concurrent.Executors;
 public abstract class BackgroundTask<Result> implements Callable<Result> {
     protected abstract void postExecute(Result result);
 
-    protected void executeTask() {
+    public void executeTask() {
         // create the thread and the executor in charge of running the task in the new thread
         ExecutorService executorService = Executors.newSingleThreadExecutor();
         // first parameter of supplyAsync is the code to be run in the thread
