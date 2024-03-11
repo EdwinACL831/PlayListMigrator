@@ -6,7 +6,7 @@ public class AuthObject {
     @SerializedName("access_token")
     private String accessToken;
 
-    // @SerializedName("token_type")
+    @SerializedName("token_type")
     private String tokenType;
 
     @SerializedName("expires_in")

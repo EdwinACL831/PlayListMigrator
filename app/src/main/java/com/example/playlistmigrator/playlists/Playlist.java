@@ -9,6 +9,12 @@ public class Playlist {
     @SerializedName("id")
     private String id;
 
+    @SerializedName("description")
+    private String description;
+
+    @SerializedName("tracks")
+    private TracksInfo tracksInfo;
+
     public Playlist(String id, String name) {
         this.id = id;
         this.name = name;
@@ -20,5 +26,13 @@ public class Playlist {
 
     public String getId() {
         return id;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public TracksInfo getTracksInfo() {
+        return tracksInfo;
     }
 }
