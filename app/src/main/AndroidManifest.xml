@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
 
     <application
         android:allowBackup="true"
@@ -17,11 +19,6 @@
             android:name=".MainActivity"
             android:exported="true"
             android:theme="@style/Theme.PlayListMigrator">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name=".playlists.PlaylistsActivity"
@@ -32,6 +29,15 @@
             android:name=".tracksselection.TrackSelectionActivity"
             android:theme="@style/Theme.PlayListMigrator"
             android:exported="true">
+        </activity>
+        <activity android:name=".auth.SelectDestinationActivity"
+            android:theme="@style/Theme.PlayListMigrator"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
 
     </application>
