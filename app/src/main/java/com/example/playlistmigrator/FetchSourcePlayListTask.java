@@ -6,6 +6,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.example.playlistmigrator.auth.AuthObject;
+import com.example.playlistmigrator.common.ConfigPropertiesManager;
 import com.example.playlistmigrator.playlists.PlaylistAPIResponse;
 import com.example.playlistmigrator.playlists.PlaylistsActivity;
 import com.google.gson.Gson;
@@ -31,15 +32,8 @@ public class FetchSourcePlayListTask extends BackgroundTask<PlaylistAPIResponse>
     public FetchSourcePlayListTask(Context context, String username) {
         this.username = username;
         this.context = context;
-        InputStream inputStream = context.getResources().openRawResource(R.raw.config);
-        Properties properties = new Properties();
-        try {
-            properties.load(inputStream);
-            clientId = properties.getProperty("client_id");
-            token = properties.getProperty("token");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        clientId = ConfigPropertiesManager.getInstance(context).getSpotifyClientId();
+        token =  ConfigPropertiesManager.getInstance(context).getSpotifyClientToken();
     }
     @Override
     protected void postExecute(PlaylistAPIResponse data) {
