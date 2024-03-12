@@ -2,6 +2,7 @@ package com.example.playlistmigrator.tracksselection;
 
 import android.content.Context;
 import android.util.Log;
+import android.widget.Button;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -13,6 +14,7 @@ import com.example.playlistmigrator.auth.AuthObject;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 import java.util.Properties;
 
 import retrofit2.Response;
@@ -30,10 +32,16 @@ public class FetchPlaylistTracksTask extends BackgroundTask<TracksAPIResponse> {
     private String token;
     private Context context;
     private RecyclerView trackListView;
-    public FetchPlaylistTracksTask(Context context, String playlistId, RecyclerView trackListView) {
+    private TrackSelectionAdapter adapter;
+    private Button continueBtn;
+    public FetchPlaylistTracksTask(Context context,
+                                   String playlistId,
+                                   RecyclerView trackListView,
+                                   Button continueBtn) {
         this.playlistId = playlistId;
         this.context = context;
         this.trackListView = trackListView;
+        this.continueBtn = continueBtn;
         InputStream inputStream = context.getResources().openRawResource(R.raw.config);
         Properties properties = new Properties();
         try {
@@ -48,10 +56,12 @@ public class FetchPlaylistTracksTask extends BackgroundTask<TracksAPIResponse> {
     protected void postExecute(TracksAPIResponse tracksAPIResponse) {
         // here is where i have to add the logic to populate the adapter
         Log.d(TAG, String.format("Playlist tracks: %d", tracksAPIResponse.getTotal()));
+        adapter = new TrackSelectionAdapter(context, tracksAPIResponse.getTracks());
 
         runOnUIThread(() -> {
-            trackListView.setAdapter(new TrackSelectionAdapter(context, tracksAPIResponse.getTracks()));
+            trackListView.setAdapter(adapter);
             trackListView.setLayoutManager(new LinearLayoutManager(context));
+            continueBtn.setEnabled(true);
         });
     }
 
@@ -103,5 +113,9 @@ public class FetchPlaylistTracksTask extends BackgroundTask<TracksAPIResponse> {
         if(context instanceof TrackSelectionActivity) {
             ((TrackSelectionActivity)context).runOnUiThread(runnable);
         }
+    }
+
+    public List<Track> getSelectedTracks() {
+        return adapter.getSelectedTracks();
     }
 }

@@ -7,6 +7,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -15,15 +17,19 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.playlistmigrator.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class TrackSelectionAdapter extends RecyclerView.Adapter<TrackSelectionAdapter.ViewHolder> {
     private static final String TAG = TrackSelectionAdapter.class.getSimpleName();
     private final Context context;
     private List<Track> tracks;
+
+    private List<Track> tracksSelected;
     public TrackSelectionAdapter(Context context, List<Track> tracks) {
         this.tracks = tracks;
         this.context = context;
+        tracksSelected = new ArrayList<>(tracks);
     }
 
     @NonNull
@@ -48,6 +54,8 @@ public class TrackSelectionAdapter extends RecyclerView.Adapter<TrackSelectionAd
         holder.setTrackArtist(sb.toString());
         holder.setInfoBtnOnClickListener(v ->
                 setupAlertDialogAndDisplay(trackInfo.getName(), trackInfo.getDurationInSeconds()));
+        holder.setOnCheckboxChange((buttonView, isChecked) ->
+                updateTrackListToMigrate(isChecked, tracksSelected, tracks.get(position)));
     }
 
     @Override
@@ -55,10 +63,21 @@ public class TrackSelectionAdapter extends RecyclerView.Adapter<TrackSelectionAd
         return tracks.size();
     }
 
+    private void updateTrackListToMigrate(boolean isChecked, List<Track> selected, Track currentTrack) {
+        if(isChecked && !selected.contains(currentTrack)) {
+            selected.add(currentTrack);
+            Log.d(TAG, String.format("track %s added to list to be exported",
+                    currentTrack.getTrackInfo().getName()));
+        } else {
+            selected.remove(currentTrack);
+            Log.d(TAG, String.format("track %s removed from list to be exported",
+                    currentTrack.getTrackInfo().getName()));
+        }
+    }
+
     private void setupAlertDialogAndDisplay(String trackName, double durationInSec) {
         int minutes = (int)durationInSec / 60;
         int secs = (int)(durationInSec - (minutes * 60));
-
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle(trackName)
@@ -79,19 +98,27 @@ public class TrackSelectionAdapter extends RecyclerView.Adapter<TrackSelectionAd
         }
     }
 
+    public List<Track> getSelectedTracks() {
+        return tracksSelected;
+    }
+
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private TextView trackName;
         private TextView trackArtist;
         private ImageView trackInfoBtn;
+        private CheckBox trackCheckbox;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             trackName = itemView.findViewById(R.id.track_name);
             trackName.setSingleLine(true);
             trackName.setEllipsize(TextUtils.TruncateAt.END);
+
             trackArtist = itemView.findViewById(R.id.track_artist);
             trackArtist.setSingleLine(true);
             trackArtist.setEllipsize(TextUtils.TruncateAt.END);
+
             trackInfoBtn = itemView.findViewById(R.id.track_info_btn);
+            trackCheckbox = itemView.findViewById(R.id.track_checkbox);
         }
 
         public void setTrackName(String name) {
@@ -104,6 +131,10 @@ public class TrackSelectionAdapter extends RecyclerView.Adapter<TrackSelectionAd
 
         public void setInfoBtnOnClickListener(View.OnClickListener onClickListener) {
             trackInfoBtn.setOnClickListener(onClickListener);
+        }
+
+        public void setOnCheckboxChange(CompoundButton.OnCheckedChangeListener onCheckedChangeListener ) {
+            trackCheckbox.setOnCheckedChangeListener(onCheckedChangeListener);
         }
     }
 }

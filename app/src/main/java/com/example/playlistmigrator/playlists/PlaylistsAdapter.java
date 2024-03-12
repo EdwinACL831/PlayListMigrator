@@ -44,12 +44,17 @@ public class PlaylistsAdapter extends RecyclerView.Adapter<PlaylistsAdapter.View
         String playlistId = playLists.get(position).getId();
         int numberOfTracks = playLists.get(position).getTracksInfo().getTotalTracks();
 
+        /*
+        * This chunk of code is in charge of sending the playlist data selected to the next activity
+        * The id and the name of it is sent
+        */
         holder.getNameTextView().setText(String.format("Title:\t%s", name));
         holder.getIdTextView().setText(String.format("ID:\t%s", playlistId));
         holder.setOnClickListener(v -> runOnUIThread(() -> {
             Log.d(TAG, String.format("Loading [%s] playlist's tracks", name));
             Intent intent = new Intent(context, TrackSelectionActivity.class);
             intent.putExtra(PlaylistsActivity.PLAYLIST_ID_TO_LOAD_KEY, playlistId);
+            intent.putExtra(PlaylistsActivity.PLAYLIST_NAME_TO_LOAD_KEY, name);
             context.startActivity(intent);
             Log.d(TAG, String.format("[%s] playlist's tracks loaded", name));
         }));

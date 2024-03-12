@@ -19,12 +19,7 @@ public class MainActivity extends ComponentActivity {
 
         button = findViewById(R.id.button);
         username = findViewById(R.id.edit_text_username);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                new FetchSourcePlayListTask(MainActivity.this, username.getEditableText().toString())
-                        .executeTask();
-            }
-        });
+        button.setOnClickListener(v -> new FetchSourcePlayListTask(MainActivity.this, username.getEditableText().toString())
+                .executeTask());
     }
 }
