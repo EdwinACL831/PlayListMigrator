@@ -20,8 +20,6 @@ import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.tasks.Task;
 
-import java.util.Objects;
-
 public class SelectDestinationActivity extends ComponentActivity {
     private static final String TAG = SelectDestinationActivity.class.getSimpleName();
     private static final int RC_SIGN_IN = 2;
@@ -32,7 +30,6 @@ public class SelectDestinationActivity extends ComponentActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        int[] ints = new int[]{1, 2};
         setContentView(R.layout.select_destination_activity);
         googleBtn = findViewById(R.id.google_sign_in);
         googleBtn.setSize(SignInButton.SIZE_STANDARD);

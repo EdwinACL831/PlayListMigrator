@@ -18,6 +18,10 @@ public class TrackInfo {
         return name;
     }
 
+    public double getDurationInSeconds() {
+        return (double)durationInMillis / 1000;
+    }
+
     public List<Artist> getArtists() {
         return artists;
     }

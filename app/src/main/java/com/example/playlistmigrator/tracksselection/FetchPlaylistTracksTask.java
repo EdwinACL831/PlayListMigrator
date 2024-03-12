@@ -50,7 +50,7 @@ public class FetchPlaylistTracksTask extends BackgroundTask<TracksAPIResponse> {
         Log.d(TAG, String.format("Playlist tracks: %d", tracksAPIResponse.getTotal()));
 
         runOnUIThread(() -> {
-            trackListView.setAdapter(new TrackSelectionAdapter(tracksAPIResponse.getTracks()));
+            trackListView.setAdapter(new TrackSelectionAdapter(context, tracksAPIResponse.getTracks()));
             trackListView.setLayoutManager(new LinearLayoutManager(context));
         });
     }

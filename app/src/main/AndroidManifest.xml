@@ -19,6 +19,11 @@
             android:name=".MainActivity"
             android:exported="true"
             android:theme="@style/Theme.PlayListMigrator">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
         <activity
             android:name=".playlists.PlaylistsActivity"
@@ -33,11 +38,6 @@
         <activity android:name=".auth.SelectDestinationActivity"
             android:theme="@style/Theme.PlayListMigrator"
             android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
 
     </application>
